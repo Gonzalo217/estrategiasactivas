@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metodologías Activas · Profesorado de Matemática</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563eb;
+    --blue-dark:#1d4ed8;
+    --blue-pale:#dbeafe;
+    --blue-mist:#eff6ff;
+    --ink:#0f172a;
+    --ink-soft:#51607a;
+    --surface:#ffffff;
+    --surface-soft:#f1f5f9;
+    --border:#e2e8f0;
+    --success:#15803d;
+    --success-bg:#dcfce7;
+    --success-border:#86efac;
+    --danger:#b91c1c;
+    --danger-bg:#fee2e2;
+    --danger-border:#fca5a5;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px -12px rgba(15,23,42,.15);
+    --shadow-lg:0 12px 40px -12px rgba(37,99,235,.25);
+    font-family:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 100% -10%, var(--blue-mist), transparent 60%),
+      var(--surface-soft);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Sora',sans-serif; margin:0;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+  :focus-visible{outline:3px solid var(--blue); outline-offset:2px; border-radius:6px;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:1080px; margin:0 auto; padding:18px 24px 16px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--blue); font-weight:600; margin-bottom:4px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow svg{width:14px;height:14px;}
+  .topbar h1{font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-.01em;}
+
+  /* number-line style progress */
+  .progress-line{
+    margin-top:18px; position:relative; height:46px;
+  }
+  .progress-track{
+    position:absolute; left:14px; right:14px; top:22px; height:2px; background:var(--border);
+  }
+  .progress-fill{
+    position:absolute; left:14px; top:22px; height:2px; background:var(--blue);
+    transition:width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-steps{ display:flex; justify-content:space-between; position:relative; }
+  .p-step{
+    display:flex; flex-direction:column; align-items:center; gap:6px; background:transparent;
+    border:none; cursor:default; font-family:'IBM Plex Mono',monospace;
+  }
+  .p-dot{
+    width:28px;height:28px;border-radius:50%;
+    background:var(--surface); border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:600; color:var(--ink-soft);
+    transition:all .3s;
+  }
+  .p-step.active .p-dot{border-color:var(--blue); color:var(--blue); background:var(--blue-mist); box-shadow:0 0 0 5px var(--blue-mist);}
+  .p-step.done .p-dot{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .p-label{font-size:11px; color:var(--ink-soft); font-weight:500; white-space:nowrap;}
+  .p-step.active .p-label{color:var(--blue); font-weight:600;}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:1080px; margin:0 auto; padding:36px 24px 80px;}
+  .panel{ display:none; animation:fadeUp .45s cubic-bezier(.2,.8,.2,1); }
+  .panel.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .section-head{ margin-bottom:24px; }
+  .section-head h2{ font-size:26px; color:var(--ink); }
+  .section-head p{ color:var(--ink-soft); margin-top:6px; font-size:15px; max-width:640px; }
+
+  /* ---------- Tab 1: Cases ---------- */
+  .cases{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  @media (max-width:820px){ .cases{grid-template-columns:1fr;} }
+  .case-card{
+    background:var(--surface); border-radius:var(--radius); border:1px solid var(--border);
+    box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;
+  }
+  .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.06em;
+    color:var(--blue); background:var(--blue-mist); padding:5px 12px; border-radius:999px;
+    display:inline-flex; align-self:flex-start; margin:16px 0 0 16px;
+  }
+  .video-shell{
+    margin:12px 16px 0; border-radius:12px; overflow:hidden; background:#0f172a;
+    aspect-ratio:16/9; position:relative;
+  }
+  .video-shell video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .video-placeholder-note{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    text-align:center; color:#cbd5e1; font-size:13px; padding:20px; font-family:'IBM Plex Mono',monospace;
+    background:#0f172a; pointer-events:none;
+  }
+  .case-body{ padding:16px 18px 20px; }
+  .case-body h3{ font-size:16px; margin-bottom:8px; }
+  .narration{
+    font-size:14px; line-height:1.65; color:var(--ink-soft);
+    border-left:3px solid var(--blue-pale); padding-left:12px;
+  }
+  .narration.placeholder{ font-style:italic; color:#94a3b8; }
+
+  .continue-row{ display:flex; justify-content:center; margin-top:32px; }
+  .btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:15px; border:none; cursor:pointer;
+    border-radius:12px; padding:13px 26px; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s, box-shadow .15s, background .15s;
+  }
+  .btn-primary{ background:var(--blue); color:#fff; box-shadow:var(--shadow-lg); }
+  .btn-primary:hover{ background:var(--blue-dark); transform:translateY(-1px); }
+  .btn-ghost{ background:var(--surface); color:var(--blue); border:1.5px solid var(--blue-pale); }
+  .btn-ghost:hover{ background:var(--blue-mist); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+
+  /* ---------- Tab 2: Drag & Drop ---------- */
+  .dnd-layout{ display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:start; }
+  @media (max-width:760px){ .dnd-layout{ grid-template-columns:1fr; } }
+  .pool{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px; box-shadow:var(--shadow); position:sticky; top:150px;
+  }
+  .pool h4{ font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:10px; font-family:'IBM Plex Mono',monospace;}
+  .card-token{
+    background:var(--blue-mist); border:1.5px solid var(--blue-pale); color:var(--blue-dark);
+    font-weight:600; font-size:13.5px; padding:11px 12px; border-radius:10px; margin-bottom:8px;
+    cursor:grab; user-select:none; transition:box-shadow .15s, transform .15s, opacity .15s;
+  }
+  .card-token:active{ cursor:grabbing; }
+  .card-token.dragging{ opacity:.35; }
+  .card-token.placed{ display:none; }
+
+  .compare-table{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden; margin-bottom:8px;
+  }
+  .ct-row{ display:grid; grid-template-columns:220px 1fr 1fr; border-top:1px solid var(--border); }
+  .ct-row:first-child{ border-top:none; }
+  .ct-head{ background:var(--blue-mist); }
+  .ct-cell{ padding:16px 18px; display:flex; align-items:center; }
+  .ct-row + .ct-row .ct-cell{ border-top:1px solid var(--border); }
+  .ct-cell + .ct-cell{ border-left:1px solid var(--border); }
+  .ct-head .ct-cell{ font-weight:700; font-size:14px; color:var(--ink); }
+  .ct-head .ct-cell.trad{ color:var(--blue-dark); }
+  .ct-head .ct-cell.act{ color:var(--blue-dark); }
+  .ct-criterio{ font-weight:700; font-size:14.5px; color:var(--ink); background:var(--surface-soft); }
+  .ct-target{
+    min-height:56px; width:100%; border-radius:10px; border:2px dashed var(--border);
+    display:flex; align-items:center; padding:8px 12px; transition:border-color .15s, background .15s;
+  }
+  .ct-target.over{ border-color:var(--blue); background:var(--blue-mist); }
+  .ct-target.correct{ border-style:solid; border-color:var(--success-border); background:var(--success-bg); }
+  .ct-target.incorrect{ border-style:solid; border-color:var(--danger-border); background:var(--danger-bg); }
+  .ct-target .dropped-token{ font-style:italic; font-weight:600; font-size:13.5px; color:var(--blue-dark); }
+  @media (max-width:700px){
+    .ct-row{ grid-template-columns:1fr; }
+    .ct-cell + .ct-cell{ border-left:none; border-top:1px solid var(--border); }
+  }
+  .slot{
+    background:var(--surface); border:2px dashed var(--border); border-radius:12px;
+    min-height:58px; padding:10px 14px; display:flex; align-items:center; gap:12px;
+    transition:border-color .15s, background .15s;
+  }
+  .slot.over{ border-color:var(--blue); background:var(--blue-mist); }
+  .slot.correct{ border-style:solid; border-color:var(--success-border); background:var(--success-bg); }
+  .slot.incorrect{ border-style:solid; border-color:var(--danger-border); background:var(--danger-bg); }
+  .slot-label{ font-size:12.5px; color:var(--ink-soft); min-width:150px; font-weight:600; }
+  .slot-content{ flex:1; display:flex; align-items:center; gap:8px; min-height:28px; }
+  .slot-icon{ font-size:16px; width:18px; text-align:center; }
+  .slot .dropped-token{ font-weight:600; font-size:13.5px; color:var(--blue-dark); }
+
+  .score-row{
+    display:flex; align-items:center; justify-content:space-between; margin-top:22px;
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 18px;
+    box-shadow:var(--shadow); flex-wrap:wrap; gap:12px;
+  }
+  .score-value{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; color:var(--ink); }
+  .score-value b{ color:var(--blue); font-size:19px; }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; }
+
+  .feedback-panel{
+    margin-top:16px; background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:18px 20px; box-shadow:var(--shadow); display:none;
+  }
+  .feedback-panel.show{ display:block; animation:fadeUp .35s; }
+  .feedback-item{ padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; line-height:1.6; }
+  .feedback-item:last-child{ border-bottom:none; }
+  .feedback-item b{ color:var(--blue-dark); }
+
+  /* ---------- Tab 3: Bosquejo ---------- */
+  .structure-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:22px 26px; margin-bottom:28px;
+  }
+  .structure-card h3{ font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+  .structure-list{ display:flex; flex-direction:column; }
+  .structure-item{ padding:14px 0; border-top:1px solid var(--border); }
+  .structure-item:first-child{ border-top:none; }
+  .structure-item .s-title{ font-weight:700; font-size:14.5px; color:var(--ink); font-family:'IBM Plex Mono',monospace; }
+  .structure-item .s-desc{ font-size:13.5px; color:var(--ink-soft); margin-top:4px; line-height:1.55; }
+
+  .divider{ height:1px; background:linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent); margin:28px 0; }
+
+  .accordion{ display:flex; flex-direction:column; gap:12px; }
+  .acc-item{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+    box-shadow:var(--shadow); transition:border-color .2s;
+  }
+  .acc-item.open{ border-color:var(--blue-pale); }
+  .acc-header{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px;
+    background:transparent; border:none; cursor:pointer; padding:16px 20px; text-align:left;
+  }
+  .acc-header:hover{ background:var(--blue-mist); }
+  .acc-num{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:var(--blue);
+    background:var(--blue-mist); border-radius:8px; padding:3px 8px; margin-right:10px;
+  }
+  .acc-title{ font-size:15.5px; font-weight:700; color:var(--ink); flex:1; }
+  .acc-chevron{ transition:transform .25s; color:var(--blue); flex-shrink:0; }
+  .acc-item.open .acc-chevron{ transform:rotate(180deg); }
+  .acc-body{ max-height:0; overflow:hidden; transition:max-height .35s cubic-bezier(.2,.8,.2,1); }
+  .acc-item.open .acc-body{ max-height:900px; }
+  .acc-body-inner{ padding:0 20px 20px; display:flex; flex-direction:column; gap:14px; }
+  .acc-block h5{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--blue); margin-bottom:5px; font-family:'IBM Plex Mono',monospace; }
+  .acc-block p{ font-size:14px; line-height:1.6; color:var(--ink-soft); margin:0; }
+  .acc-example{ background:var(--blue-mist); border-radius:10px; padding:12px 14px; border-left:3px solid var(--blue); }
+
+  .reminder-card{
+    margin-top:32px; background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+    border-radius:var(--radius); padding:24px 28px; color:#fff; box-shadow:var(--shadow-lg);
+    display:flex; align-items:center; gap:16px;
+  }
+  .reminder-card svg{ flex-shrink:0; width:32px; height:32px; }
+  .reminder-card h4{ font-size:16px; margin-bottom:4px; }
+  .reminder-card p{ font-size:14px; opacity:.92; margin:0; line-height:1.5; }
+
+  .todo-flag{
+    background:#fffbeb; border:1.5px dashed #f59e0b; color:#92400e; border-radius:10px;
+    padding:10px 14px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; margin-top:10px;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M4 6h16M4 18h10"/></svg>
+      Profesorado de Educación Secundaria en Matemática
+    </div>
+    <h1>Metodologías Activas en la Enseñanza de la Matemática</h1>
+    <div class="progress-line">
+      <div class="progress-track"></div>
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      <div class="progress-steps">
+        <button class="p-step active" data-step="1" disabled>
+          <span class="p-dot">1</span><span class="p-label">Análisis de casos</span>
+        </button>
+        <button class="p-step" data-step="2" disabled>
+          <span class="p-dot">2</span><span class="p-label">Clasificación</span>
+        </button>
+        <button class="p-step" data-step="3" disabled>
+          <span class="p-dot">3</span><span class="p-label">Bosquejo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===================== PANEL 1 ===================== -->
+  <section class="panel active" id="panel-1">
+    <div class="section-head">
+      <h2>Análisis de casos</h2>
+      <p>Miren ambos videos y lean la narración completa de cada caso antes de avanzar.</p>
+    </div>
+
+    <div class="cases">
+      <article class="case-card">
+        <span class="case-tag">Caso A</span>
+        <div class="video-shell">
+          <video controls preload="metadata">
+            <source src="videos/caso-a.mp4" type="video/mp4">
+            Tu navegador no puede reproducir este video.
+          </video>
+        </div>
+        <div class="case-body">
+          <h3>El profesor Roberto</h3>
+          <p class="narration">El profesor Roberto ingresa al aula de primer año, saluda al curso y escribe en el pizarrón el título "Área y perímetro de cuadriláteros". Luego anuncia que ese día aprenderán las fórmulas necesarias para resolver distintos ejercicios sobre el tema.</p>
+          <p class="narration">Sin presentar una situación problemática ni preguntar qué saben los estudiantes, comienza explicando las características de cada cuadrilátero y escribe en el pizarrón las fórmulas correspondientes para calcular el área y el perímetro. A medida que desarrolla la explicación, los alumnos escuchan, observan y copian la información en sus carpetas.</p>
+          <p class="narration">Una vez escritas las fórmulas, Roberto resuelve un ejemplo paso a paso, justificando cada operación y señalando cuál es el procedimiento correcto que deben seguir. Durante la explicación realiza algunas preguntas breves para comprobar si los estudiantes están prestando atención, pero es él quien responde, amplía las explicaciones y decide cuándo avanzar con el contenido.</p>
+          <p class="narration">Finalizada la exposición, entrega una guía de ejercicios para resolver de manera individual. Les indica que deben aplicar las fórmulas exactamente como fueron explicadas en el ejemplo del pizarrón. Los estudiantes trabajan en silencio, intentando reproducir el procedimiento mostrado por el docente.</p>
+          <p class="narration">Mientras tanto, Roberto recorre el aula observando las resoluciones. Cuando encuentra un error, detiene al estudiante, marca el paso incorrecto y le muestra nuevamente cómo debe hacerse. Si nota que varios alumnos cometen la misma equivocación, interrumpe el trabajo para repetir la explicación frente a todo el curso y resolver otro ejemplo similar, con el propósito de que todos utilicen el procedimiento correcto antes de continuar.</p>
+          <p class="narration">Al finalizar la clase, corrige algunos ejercicios en el pizarrón y pide a los estudiantes que comparen sus respuestas con la resolución presentada para verificar si siguieron correctamente los pasos explicados. Finalmente, deja una serie de ejercicios similares como tarea para continuar practicando el mismo procedimiento en sus casas.</p>
+        </div>
+      </article>
+
+      <article class="case-card">
+        <span class="case-tag">Caso B</span>
+        <div class="video-shell">
+          <video controls preload="metadata">
+            <source src="videos/caso-b.mp4" type="video/mp4">
+            Tu navegador no puede reproducir este video.
+          </video>
+        </div>
+        <div class="case-body">
+          <h3>La profesora Laura</h3>
+          <p class="narration">La profesora Laura inicia la clase reuniendo al curso y les plantea una situación cercana a la realidad de la escuela: la cooperadora desea pintar el aula y reemplazar los zócalos, pero antes necesita calcular cuánta pintura y cuántos metros de zócalo deberá comprar para no gastar dinero de más.</p>
+          <p class="narration">Para resolver el problema, entrega a cada grupo una cinta métrica, una hoja con los precios de la pintura por metro cuadrado y del zócalo por metro lineal, además de una consigna general: "Ustedes deberán decidir qué necesitan medir, qué cálculos realizar y cómo justificarían la cantidad de materiales que recomendarían comprar."</p>
+          <p class="narration">Los estudiantes comienzan a discutir entre ellos. Algunos proponen medir únicamente las paredes, mientras que otros consideran necesario medir también puertas y ventanas. En el intercambio aparecen distintas ideas sobre qué datos son importantes y cómo podrían utilizarlos para resolver el problema. Cada grupo organiza las tareas, toma medidas, registra los datos y ensaya diferentes formas de realizar los cálculos.</p>
+          <p class="narration">Mientras los grupos trabajan, Laura recorre el aula observando las discusiones. En lugar de indicar directamente qué hacer o qué fórmula utilizar, interviene realizando preguntas que ayudan a los estudiantes a revisar sus decisiones: "¿Qué superficie deben pintar realmente?", "¿Qué representa el perímetro en esta situación?", "¿Todas las medidas que tomaron serán necesarias?", "¿Cómo podrían comprobar si el resultado tiene sentido?", "¿Qué pasaría si olvidaran descontar las ventanas?"</p>
+          <p class="narration">En algunos grupos surgen errores o diferencias en los cálculos. Antes de intervenir, Laura les pide que expliquen cómo llegaron a sus resultados y que comparen sus procedimientos con los de otros compañeros. A partir de ese intercambio, varios grupos detectan inconsistencias, revisan sus mediciones o modifican sus estrategias de resolución hasta encontrar una respuesta que puedan fundamentar.</p>
+          <p class="narration">Al finalizar la actividad, cada grupo presenta su propuesta al resto del curso, explica las decisiones que tomó, las dificultades que encontró y cómo las resolvió. Entre todos comparan los distintos procedimientos, analizan cuál resulta más conveniente para la situación planteada y elaboran una conclusión común sobre la cantidad de materiales que sería necesario comprar y por qué.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="continue-row">
+      <button class="btn btn-primary" onclick="goTo(2)">Continuar al análisis →</button>
+    </div>
+  </section>
+
+  <!-- ===================== PANEL 2 ===================== -->
+  <section class="panel" id="panel-2">
+    <div class="section-head">
+      <h2>Clasificación: estrategia tradicional vs. estrategia activa</h2>
+      <p>Arrastren cada etiqueta del banco hasta la celda que le corresponde en el cuadro, según el criterio de análisis de cada fila.</p>
+    </div>
+
+    <div class="dnd-layout">
+      <div class="pool" id="pool">
+        <h4>Banco de etiquetas para arrastrar</h4>
+        <!-- tokens injected by JS -->
+      </div>
+
+      <div id="slots">
+        <!-- comparison table injected by JS -->
+      </div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-value">Puntaje: <b id="scoreValue">0</b> / 8</div>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="showFeedback()">Ver retroalimentación</button>
+        <button class="btn btn-ghost" onclick="resetDnd()">Reintentar</button>
+        <button class="btn btn-primary" id="continueTab2" onclick="goTo(3)" disabled>Continuar →</button>
+      </div>
+    </div>
+
+    <div class="feedback-panel" id="feedbackPanel"></div>
+  </section>
+
+  <!-- ===================== PANEL 3 ===================== -->
+  <section class="panel" id="panel-3">
+    <div class="section-head">
+      <h2>Diseño del bosquejo</h2>
+      <p>Elijan una sola estrategia y usen esta estructura para diseñar el bosquejo de su clase.</p>
+    </div>
+
+    <div class="structure-card">
+      <h3>📐 Estructura del bosquejo</h3>
+      <div class="structure-list">
+        <div class="structure-item">
+          <div class="s-title">Tema</div>
+        </div>
+        <div class="structure-item">
+          <div class="s-title">Estrategia de enseñanza seleccionada</div>
+        </div>
+        <div class="structure-item">
+          <div class="s-title">Inicio</div>
+          <div class="s-desc">Planteamiento de una situación que introduzca el contenido sin presentar directamente la definición o el procedimiento.</div>
+        </div>
+        <div class="structure-item">
+          <div class="s-title">Desarrollo</div>
+          <div class="s-desc">Descripción de las actividades que realizarán los estudiantes y del rol que asumirá el docente durante la clase.</div>
+        </div>
+        <div class="structure-item">
+          <div class="s-title">Cierre</div>
+          <div class="s-desc">Actividad destinada a recuperar los aprendizajes y realizar una síntesis de lo trabajado.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="accordion" id="accordion">
+      <!-- strategy items injected by JS -->
+    </div>
+
+    <div class="reminder-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+      <div>
+        <h4>Recordatorio</h4>
+        <p>Elijan una sola estrategia de enseñanza y utilícenla para diseñar el bosquejo de la clase.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============ NAVIGATION ============ */
+function goTo(step){
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+step).classList.add('active');
+
+  document.querySelectorAll('.p-step').forEach(el => {
+    const s = Number(el.dataset.step);
+    el.classList.remove('active','done');
+    if(s < step) el.classList.add('done');
+    if(s === step) el.classList.add('active');
+  });
+  document.getElementById('progressFill').style.width = ((step-1)/2*100)+'%';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============ TAB 2: DRAG & DROP ============ */
+const ROWS = [
+  {
+    key:'rol-docente', criterio:'Rol del Docente',
+    trad:'Transmisor del saber', act:'Guía y mediador',
+    explainTrad:'En la <b>estrategia tradicional</b>, el docente transmite el saber ya elaborado: explica, corrige y muestra el procedimiento correcto.',
+    explainAct:'En la <b>estrategia activa</b>, el docente guía y media el proceso, interviniendo con preguntas en lugar de dar la respuesta.',
+  },
+  {
+    key:'rol-estudiante', criterio:'Rol del Estudiante',
+    trad:'Receptor pasivo', act:'Protagonista activo',
+    explainTrad:'En la <b>estrategia tradicional</b>, el estudiante escucha, copia y reproduce lo que el docente explica: es un receptor pasivo.',
+    explainAct:'En la <b>estrategia activa</b>, el estudiante decide, mide, calcula, discute y argumenta: es protagonista de su aprendizaje.',
+  },
+  {
+    key:'origen-conocimiento', criterio:'Origen del Conocimiento',
+    trad:'Viene dado y cerrado', act:'Se construye en el proceso',
+    explainTrad:'En la <b>estrategia tradicional</b>, el conocimiento se presenta ya elaborado y cerrado, listo para ser copiado y memorizado.',
+    explainAct:'En la <b>estrategia activa</b>, el conocimiento se va construyendo a medida que el grupo investiga y resuelve el problema.',
+  },
+  {
+    key:'uso-error', criterio:'Uso del Error',
+    trad:'Se penaliza / Se evita', act:'Es motor de aprendizaje',
+    explainTrad:'En la <b>estrategia tradicional</b>, el error se corrige de inmediato y se busca evitarlo, mostrando otra vez el paso correcto.',
+    explainAct:'En la <b>estrategia activa</b>, el error se analiza junto al grupo y se aprovecha como oportunidad para revisar y aprender.',
+  },
+];
+
+const items = [];
+ROWS.forEach(r => {
+  items.push({ id:r.key+'-trad', label:r.trad, slot:r.key+'-trad', explain:r.explainTrad });
+  items.push({ id:r.key+'-act', label:r.act, slot:r.key+'-act', explain:r.explainAct });
+});
+
+const pool = document.getElementById('pool');
+const slotsContainer = document.getElementById('slots');
+let placements = {}; // slotId -> itemId
+
+function shuffledItems(){
+  const arr = [...items];
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+const displayOrder = shuffledItems();
+
+function renderPool(){
+  pool.querySelectorAll('.card-token').forEach(t => t.remove());
+  displayOrder.forEach(it => {
+    const t = document.createElement('div');
+    t.className = 'card-token';
+    t.textContent = it.label;
+    t.draggable = true;
+    t.id = 'token-'+it.id;
+    t.dataset.item = it.id;
+    if(Object.values(placements).includes(it.id)) t.classList.add('placed');
+    t.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', it.id);
+      t.classList.add('dragging');
+    });
+    t.addEventListener('dragend', () => t.classList.remove('dragging'));
+    pool.appendChild(t);
+  });
+}
+
+function makeTarget(slotId){
+  const t = document.createElement('div');
+  t.className = 'ct-target';
+  t.id = slotId;
+  t.addEventListener('dragover', e => { e.preventDefault(); t.classList.add('over'); });
+  t.addEventListener('dragleave', () => t.classList.remove('over'));
+  t.addEventListener('drop', e => {
+    e.preventDefault();
+    t.classList.remove('over');
+    const itemId = e.dataTransfer.getData('text/plain');
+    placeItem(slotId, itemId);
+  });
+  return t;
+}
+
+function renderSlots(){
+  slotsContainer.innerHTML = '';
+  const table = document.createElement('div');
+  table.className = 'compare-table';
+
+  const head = document.createElement('div');
+  head.className = 'ct-row ct-head';
+  head.innerHTML = `
+    <div class="ct-cell">Criterio de Análisis</div>
+    <div class="ct-cell trad">Estrategia Tradicional</div>
+    <div class="ct-cell act">Estrategia Activa</div>`;
+  table.appendChild(head);
+
+  ROWS.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'ct-row';
+    const criterioCell = document.createElement('div');
+    criterioCell.className = 'ct-cell ct-criterio';
+    criterioCell.textContent = r.criterio;
+    row.appendChild(criterioCell);
+
+    const tradCell = document.createElement('div');
+    tradCell.className = 'ct-cell';
+    tradCell.appendChild(makeTarget(r.key+'-trad'));
+    row.appendChild(tradCell);
+
+    const actCell = document.createElement('div');
+    actCell.className = 'ct-cell';
+    actCell.appendChild(makeTarget(r.key+'-act'));
+    row.appendChild(actCell);
+
+    table.appendChild(row);
+  });
+
+  slotsContainer.appendChild(table);
+  refreshSlotContents();
+}
+
+function placeItem(slotId, itemId){
+  Object.keys(placements).forEach(k => { if(placements[k] === itemId) delete placements[k]; });
+  placements[slotId] = itemId;
+  renderPool();
+  refreshSlotContents();
+  updateScore();
+}
+
+function refreshSlotContents(){
+  ROWS.forEach(r => {
+    [r.key+'-trad', r.key+'-act'].forEach(slotId => {
+      const el = document.getElementById(slotId);
+      if(!el) return;
+      el.classList.remove('correct','incorrect');
+      el.innerHTML = '';
+      const itemId = placements[slotId];
+      if(!itemId) return;
+      const item = items.find(i => i.id === itemId);
+      const isCorrect = item.slot === slotId;
+      el.classList.add(isCorrect ? 'correct' : 'incorrect');
+      el.innerHTML = `<span class="slot-icon">${isCorrect ? '✔️' : '❌'}</span><span class="dropped-token">${item.label}</span>`;
+    });
+  });
+}
+
+function updateScore(){
+  let score = 0;
+  Object.keys(placements).forEach(slotId => {
+    const item = items.find(i => i.id === placements[slotId]);
+    if(item && item.slot === slotId) score++;
+  });
+  document.getElementById('scoreValue').textContent = score;
+  document.getElementById('continueTab2').disabled = Object.keys(placements).length < items.length;
+}
+
+function resetDnd(){
+  placements = {};
+  document.getElementById('feedbackPanel').classList.remove('show');
+  renderPool();
+  renderSlots();
+  updateScore();
+}
+
+function showFeedback(){
+  const panel = document.getElementById('feedbackPanel');
+  panel.innerHTML = items.map(it => `<div class="feedback-item">${it.explain}</div>`).join('');
+  panel.classList.toggle('show');
+}
+
+renderPool();
+renderSlots();
+updateScore();
+
+/* ============ TAB 3: ACCORDION ============ */
+const strategies = [
+  {
+    title:'Aprendizaje Basado en Problemas (ABP)',
+    consiste:'Los estudiantes se enfrentan a un problema abierto, complejo y realista que no tiene una única solución inmediata. El problema actúa como motor: los alumnos deben investigar y descubrir la teoría matemática necesaria para resolverlo.',
+    estudiante:'Investiga, debate, plantea hipótesis y propone soluciones justificadas.',
+    docente:'Diseña el problema, facilita fuentes de información y guía mediante preguntas, evitando dar respuestas directas.',
+    ejemplo:'La escuela donó exactamente 24 metros de tejido de alambre para construir una huerta rectangular. ¿Qué dimensiones debe tener para obtener la mayor superficie cultivable?'
+  },
+  {
+    title:'Aprendizaje Basado en Proyectos (ABPro)',
+    consiste:'Se centra en la elaboración de un producto final concreto tras un proceso prolongado de investigación y trabajo colaborativo.',
+    estudiante:'Planifica, ejecuta tareas, integra saberes y presenta un producto final.',
+    docente:'Organiza tiempos, brinda recursos, monitorea avances y retroalimenta continuamente.',
+    ejemplo:'Diseñar el proyecto técnico y presupuestario para pintar el patio de la escuela optimizando materiales.'
+  },
+  {
+    title:'Estudio de Casos',
+    consiste:'Los estudiantes analizan una situación real o verosímil, diagnostican el problema, consideran variables y fundamentan decisiones.',
+    estudiante:'Analiza información, toma decisiones y argumenta matemáticamente.',
+    docente:'Modera el debate y asegura el sustento teórico de los argumentos.',
+    ejemplo:'Analizar los costos de un puesto gastronómico para decidir qué producto ofrece mayor ganancia.'
+  },
+  {
+    title:'Aprendizaje Cooperativo',
+    consiste:'Trabajo en grupos pequeños con interdependencia positiva donde todos deben aprender el contenido completo.',
+    estudiante:'Asume roles, colabora y se responsabiliza por el aprendizaje propio y grupal.',
+    docente:'Diseña los grupos, estructura la dinámica y monitorea habilidades sociales y cognitivas.',
+    ejemplo:'Aplicar la técnica Rompecabezas para enseñar diferentes casos de factoreo.'
+  },
+];
+
+const accordion = document.getElementById('accordion');
+strategies.forEach((s, idx) => {
+  const item = document.createElement('div');
+  item.className = 'acc-item';
+  item.innerHTML = `
+    <button class="acc-header" aria-expanded="false">
+      <span style="display:flex;align-items:center;"><span class="acc-num">0${idx+1}</span><span class="acc-title">${s.title}</span></span>
+      <svg class="acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="acc-block"><h5>¿En qué consiste?</h5><p>${s.consiste}</p></div>
+        <div class="acc-block"><h5>Rol del estudiante</h5><p>${s.estudiante}</p></div>
+        <div class="acc-block"><h5>Rol del docente</h5><p>${s.docente}</p></div>
+        <div class="acc-block acc-example"><h5>Ejemplo</h5><p>${s.ejemplo}</p></div>
+      </div>
+    </div>
+  `;
+  const header = item.querySelector('.acc-header');
+  header.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    item.classList.toggle('open', !isOpen);
+    header.setAttribute('aria-expanded', String(!isOpen));
+  });
+  accordion.appendChild(item);
+});
+</script>
+</body>
+</html>
